@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leader-board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <div class="heading"><h1>Leader Board</h1></div>
+
+                <div id="formToAddPlayer">
+                    <div>
+                        <input type="text" id="first-name" placeholder="First Name">
+                    </div>
+    
+                    <div>
+                        <input type="text" id="last-name" placeholder="last-name">
+                    </div>
+    
+                    <div>
+                        <input type="text" id="country" placeholder="Country">
+                    </div>
+    
+                    <div>
+                        <input type="number" id="score" placeholder="Score" max="100" min="0">
+                    </div>
+    
+                    <button class="btn" onclick="addPlayer(event)">Add Player</button>
+                </div>
+
+
+                <table id="searchTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Country</th>
+                            <th>Score</th>
+                            <th>Increase</th>
+                            <th>Decrease</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="result">
+
+                        </tr>
+                    </tbody>
+                </table>
+
+        </div>
+
+        
+    </main>
+    <script>
+
+        let PlayersListArr = [];
+
+        function addPlayer(event) {
+
+            event.preventDefault();
+
+            let playerList = document.getElementById('result');
+            let firstName = document.getElementById('first-name').value;
+            let lastName = document.getElementById('last-name').value;
+            let country = document.getElementById('country').value;
+            let score = document.getElementById('score').value;
+
+            let playerData = {
+                name: firstName + " " + lastName,
+                country: country,
+                score: Number(score)
+            }
+
+            PlayersListArr.push(playerData);
+            refreshList();
+        }
+
+        function refreshList() {
+
+
+            PlayersListArr.sort((player1, player2) => parseInt(player2.score) - parseInt(player1.score));
+            let playerList = document.getElementById('result');
+
+            playerList.innerHTML = '';
+
+            for (let i = 0; i < PlayersListArr.length; i++) {
+                let player = PlayersListArr[i];
+
+
+                let liEl = document.createElement("table");
+                let nameContent = document.createElement('td');
+                // nameContent.classList.add("");
+                let countryContent = document.createElement('td');
+                let currentScore = document.createElement('td');
+
+                let incScore = document.createElement('button');
+                let decScore = document.createElement('button');
+                let del = document.createElement('button');
+
+                currentScore.innerText = player.score;
+                countryContent.innerText = player.country;
+                nameContent.innerText = player.name;
+
+
+                incScore.innerText = 'Increase';
+                decScore.innerText = 'Decrease';
+                del.innerText = 'Delete';
+                incScore.addEventListener('click', () => incScoreHandler(i));
+                decScore.addEventListener('click', () => decScoreHandler(i));
+                del.addEventListener('click', () => deletePlayer(i));
+
+                liEl.append(nameContent, countryContent, currentScore, incScore, decScore, del);
+                playerList.append(liEl);
+            }
+        }
+
+
+
+
+        function incScoreHandler(index) {
+            if (PlayersListArr[index].score < 100) {
+                PlayersListArr[index].score += 5;
+            }
+            refreshList()
+        }
+
+        function decScoreHandler(index) {
+            if (PlayersListArr[index].score > 0) {
+                PlayersListArr[index].score -= 5;
+            }
+            refreshList()
+        }
+
+        function deletePlayer(index) {
+            let newPlaylist = PlayersListArr.filter((e, idx) => {
+                return idx != index
+            })
+            
+            PlayersListArr = [...newPlaylist];
+            refreshList();
+        }
+    </script>
+</body>
+
+</html>
